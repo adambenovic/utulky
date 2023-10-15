@@ -8,9 +8,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PetCrudController extends AbstractCrudController
 {
@@ -36,7 +38,7 @@ class PetCrudController extends AbstractCrudController
         yield TextField::new('name');
 
         if ($pageName !== Crud::PAGE_INDEX) {
-            yield TextareaField::new('imageFile')->setFormType(VichImageType::class);
+            yield Field::new('imageFile')->setFormType(VichImageType::class);
         }
 
         yield ChoiceField::new('size')

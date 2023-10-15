@@ -3,10 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\Pet;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\PetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,6 +14,42 @@ class PetController extends AbstractController
 {
     #[Route('/{id}', name: 'app_pet_show', methods: ['GET'])]
     public function show(Pet $pet): Response
+    {
+        return new JsonResponse([
+            'id' => $pet->getId(),
+            'name' => $pet->getName(),
+            'size' => $pet->getSize(),
+            'type' => $pet->getType(),
+            'gender' => $pet->getGender(),
+            'age' => $this->guessAge($pet),
+            'description' => strip_tags($pet->getDescription()),
+            'image' => '/images/' .$pet->getImageName(),
+        ]);
+    }
+
+    #[Route('s', name: 'app_pets_show', methods: ['GET'])]
+    public function all(PetRepository $repository): Response
+    {
+        $pets = $repository->findAll();
+        $data = [];
+
+        foreach ($pets as $pet) {
+            $data[] = [
+                'id' => $pet->getId(),
+                'name' => $pet->getName(),
+                'size' => $pet->getSize(),
+                'type' => $pet->getType(),
+                'gender' => $pet->getGender(),
+                'age' => $this->guessAge($pet),
+                'description' => strip_tags($pet->getDescription()),
+                'image' => '/images/' . $pet->getImageName(),
+            ];
+        }
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    private function guessAge(Pet $pet)
     {
         $interval = (new \DateTime())->diff($pet->getDateOfBirth());
         $years = match ($interval->y) {
@@ -38,12 +73,6 @@ class PetController extends AbstractController
             default => $interval->d . ' dní',
         };
 
-        return new JsonResponse([
-            'id' => $pet->getId(),
-            'name' => $pet->getName(),
-            'size' => $pet->getSize(),
-            'type' => $pet->getType(),
-            'age' => trim($years . ' ' . $months . ' ' . $days),
-        ]);
+        return trim($years . ' ' . $months . ' ' . $days);
     }
 }

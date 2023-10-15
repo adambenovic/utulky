@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Driver\File;
+use Symfony\Component\HttpFoundation\File\File;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use OpenApi\Attributes as OA;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PetRepository::class)]
@@ -48,6 +48,7 @@ class Pet
     private ?Template $template = null;
 
     #[Vich\UploadableField(mapping: 'pets', fileNameProperty: 'imageName', size: 'imageSize')]
+    #[OA\Property(type: '')]
     private ?File $imageFile = null;
 
     #[ORM\Column(nullable: true)]
@@ -181,13 +182,15 @@ class Pet
         return $this;
     }
 
-    public function setImageFile(?File $imageFile = null): void
+    public function setImageFile(?File $imageFile = null): static
     {
         $this->imageFile = $imageFile;
 
         if (null !== $imageFile) {
             $this->updatedAt = new \DateTime();
         }
+
+        return $this;
     }
 
     public function getImageFile(): ?File
@@ -195,9 +198,11 @@ class Pet
         return $this->imageFile;
     }
 
-    public function setImageName(?string $imageName): void
+    public function setImageName(?string $imageName): static
     {
         $this->imageName = $imageName;
+
+        return $this;
     }
 
     public function getImageName(): ?string
@@ -205,9 +210,11 @@ class Pet
         return $this->imageName;
     }
 
-    public function setImageSize(?int $imageSize): void
+    public function setImageSize(?int $imageSize): static
     {
         $this->imageSize = $imageSize;
+
+        return $this;
     }
 
     public function getImageSize(): ?int

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 final class HealthController extends AbstractController
 {
-    #[Route('/api/health', name: 'health', methods: ['GET'])]
+    #[Route('/api/health', name: 'health', methods: ['GET', 'OPTIONS'])]
     public function health(): Response
     {
         return new JsonResponse(
